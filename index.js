@@ -2,10 +2,9 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const hostname = 'localhost';
+const homePage = require('./routes/home-page');
 
-app.get('/', (req,res) =>{
-    res.status(200).send("Hello World");
-})
+app.use(homePage)
 
 app.listen(port, err =>{
     if (err) {
