@@ -2,26 +2,32 @@ const express = require('express');
 const router = express.Router();
 const fileStream = require('fs');
 
-router.get('/', (req,res) => {
-    let weekWorkoutText = fileStream.ReadStream('./FreeWeekWorkout.txt').toString();
-    let weekWorkoutJSON = structureWorkoutIntoJSON(weekWorkoutText);
-    res.send(weekWorkoutJSON);
-})
+const getWeekWorkout = (req,res, next) => {
+    const weekWorkoutstream = fileStream.createReadStream('./FreeWeekWorkout.txt');
+    weekWorkoutstream.on('data', data => req.workout = data.toString());
+    weekWorkoutstream.on('end', () => next())
+}
 
-const structureWorkoutIntoJSON = ((weekWorkoutText) =>{
-    let array = weekWorkoutText.split('\n\n');
-    result = {
+const structureWorkoutIntoJSON = (req,res,next) =>{
+    console.log(req.workout);
+    const array = req.workout.split('\n');
+    let result = {
         workouts:[]
     };
-    for (let i = 0; i < array.length; i+=2) {
-        const workoutObj = {
+    for (let i = 0; i < array.length; i++) {
+        
+        let workoutObj = {
             workoutGroup: array[i],
             workoutExcercises: array[i+1]
         }
         result.workouts.push(workoutObj)
     }
-    workoutJSON = JSON.stringify(result);
-    return workoutJSON
+    req.workoutJSON = JSON.stringify(result);
+    next();
+}
+
+router.get('/', getWeekWorkout, structureWorkoutIntoJSON, (req, res) =>{
+    res.status(200).send(req.workoutJSON);
 })
 
 module.exports = router;
