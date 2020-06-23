@@ -11,17 +11,35 @@ const getWeekWorkout = (req,res, next) => {
 const structureWorkoutIntoJSON = (req,res,next) =>{
     console.log(req.workout);
     const array = req.workout.split('\n');
-    let result = {
+    const result = {
         workouts:[]
     };
+
+    let isGroupName = true;
     for (let i = 0; i < array.length; i++) {
-        
-        let workoutObj = {
-            workoutGroup: array[i],
-            workoutExcercises: array[i+1]
+        let element = array[i];
+        if (!element.trim()) {
+            element = array[++i];
         }
-        result.workouts.push(workoutObj)
+        let workoutObj = {}
+        
+        if (isGroupName) {
+            workoutObj.workoutGroup = element;
+            isGroupName = !isGroupName;
+            element = array[++i];
+        }
+        workoutObj.workoutExcercises =[];
+        workoutObj.workoutExcercises.push(element);
+        element = array[++i];
+        while (i < array.length && element.trim()) {
+            workoutObj.workoutExcercises.push(element);
+            element = array[++i];
+        }
+
+        result.workouts.push(workoutObj);
+        isGroupName = true;
     }
+
     req.workoutJSON = JSON.stringify(result);
     next();
 }
