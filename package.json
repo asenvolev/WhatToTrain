@@ -19,6 +19,7 @@
   "homepage": "https://github.com/asenvolev/Express.JS-Server#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "express-handlebars": "^4.0.4",
     "nodemon": "^2.0.4"
   }
 }
