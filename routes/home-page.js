@@ -9,7 +9,6 @@ const getWeekWorkout = (req,res, next) => {
 }
 
 const structureWorkoutIntoJSON = (req,res,next) =>{
-    console.log(req.workout);
     const array = req.workout.split('\n');
     const result = {
         workouts:[]
@@ -29,10 +28,9 @@ const structureWorkoutIntoJSON = (req,res,next) =>{
             element = array[++i];
         }
         workoutObj.workoutExcercises =[];
-        workoutObj.workoutExcercises.push(element);
         element = array[++i];
         while (i < array.length && element.trim()) {
-            workoutObj.workoutExcercises.push(element);
+            workoutObj.workoutExcercises.push({excerciseName:element});
             element = array[++i];
         }
 
@@ -40,12 +38,14 @@ const structureWorkoutIntoJSON = (req,res,next) =>{
         isGroupName = true;
     }
 
-    req.workoutJSON = JSON.stringify(result);
+    req.workouts = result.workouts;//JSON = JSON.stringify(result);
     next();
 }
 
 router.get('/', getWeekWorkout, structureWorkoutIntoJSON, (req, res) =>{
-    res.status(200).send(req.workoutJSON);
+    //res.status(200).send(req.workoutJSON);
+    //console.log(req.workouts)
+    res.render('home-page', {workouts: req.workouts});
 })
 
 module.exports = router;

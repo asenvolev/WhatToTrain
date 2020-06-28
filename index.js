@@ -9,6 +9,7 @@ app.engine('.hbs', handlebars({
     extname: '.hbs'
 }));
 app.set('view engine', '.hbs');
+app.set('views', './views');
 app.set('view options', { layout: 'main' });
 
 app.use(homePage)
